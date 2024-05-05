@@ -1,32 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
-import ImageViewer from "./component/ImageViewer";
-import Button from "./component/Button";
-import Daily from "./page/Daily";
+import {StyleSheet, Text, View, Image, Dimensions, Modal} from 'react-native';
+import ImageViewer from "./src/component/ImageViewer";
+import Button from "./src/component/Button";
+import Daily from "./src/page/Daily";
 import {NavigationContainer} from "@react-navigation/native";
 import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
-import Monthly from "./page/Monthly";
-import AssetManage from "./page/AssetManage";
-import Preference from "./page/Preference";
+import Monthly from "./src/page/Monthly";
+import AssetManage from "./src/page/AssetManage";
+import Preference from "./src/page/Preference";
 import {Ionicons} from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
-import colors from "./assets/colors.json";
+import ReceiptModal from "./src/page/ReceiptModal";
 
-const BackgroundImage = require('./assets/background-image.png');
+const BackgroundImage = require('./src/assets/background-image.png');
 const Tab = createMaterialTopTabNavigator();
 const windowWidth = Dimensions.get('window').width;
 const tabWidth = windowWidth/4;
 
+
+
 export default function App() {
   return (
-    <NavigationContainer style={styles.container}>
+    <NavigationContainer className='bg-gray-500' style={styles.container}>
         <Tab.Navigator
+            className={'bg-gray-500'}
             tabBarPosition={'bottom'}
             style={styles.bottomTab}
             screenOptions={
                 {
-                    tabBarStyle: { backgroundColor: colors.mainColor, height: 80, borderWidth: 1, borderRadius: 15 },
-                    tabBarShowLabel: true,
+                    tabBarStyle: { backgroundColor: 'white', height: 80, borderWidth: 1, borderRadius: 15,
+                        shadowOffset: {width: 10, height: 10}},
                     tabBarIndicatorStyle: { backgroundColor: '#000', height: 3, top: 0, borderRadius: 30, width: 60,
                         marginLeft: (tabWidth-60)/2, },
                 }
@@ -41,7 +44,6 @@ export default function App() {
             <Tab.Screen name="Setting" component={Preference} options={{headerShown: false,
                 tabBarIcon: () => <AntDesign name="setting" size={24} color="black" />}} />
         </Tab.Navigator>
-
     </NavigationContainer>
   );
 }
@@ -49,7 +51,6 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
     flex: 1,
-    backgroundColor: colors.mainColor,
     alignItems: 'center',
     justifyContent: 'center',
     },
@@ -64,6 +65,5 @@ const styles = StyleSheet.create({
     bottomTab: {
         height: '100%',
         paddingBottom: 0,
-        backgroundColor: colors.mainColor,
     }
 });

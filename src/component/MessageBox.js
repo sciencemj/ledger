@@ -5,8 +5,8 @@ const side = windowWidth/2 -10;
 export default function MessageBox({title, content, func}) {
 
     return(
-        <View style={styles.boxContainer}>
-            <Pressable onPress={func} style={styles.box}>
+        <View className='shadow-lg shadow-black' style={styles.boxContainer}>
+            <Pressable className='rounded-lg bg-white' onPress={func} style={styles.box}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.content}>{content}</Text>
             </Pressable>
@@ -16,16 +16,17 @@ export default function MessageBox({title, content, func}) {
 
 const styles = StyleSheet.create({
     boxContainer: {
-        width: side * 2,
+        width: windowWidth * 11/12,
         height: side - side/6,
         margin: side/12,
         justifyContent: 'center',
     },
     box: {
         flex: 1,
-        backgroundColor: '#a9ac94',
-        borderRadius: 20,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        shadowRadius: 0,
+        shadowColor: '#000',
+        shadowOffset: { width: 10, height: 10 },
     },
     title: {
         fontSize: 18,
