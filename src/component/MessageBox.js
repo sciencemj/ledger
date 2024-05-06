@@ -2,12 +2,13 @@ import {Dimensions, Pressable, Text, View, StyleSheet} from "react-native";
 const windowWidth = Dimensions.get('window').width;
 const side = windowWidth/2 -10;
 
-export default function MessageBox({title, content, func}) {
+export default function MessageBox({icon, title, content, func}) {
 
     return(
         <View className='shadow-lg shadow-black' style={styles.boxContainer}>
             <Pressable className='rounded-lg bg-white' onPress={func} style={styles.box}>
-                <Text style={styles.title}>{title}</Text>
+
+                <Text style={styles.title}>{icon} {title}</Text>
                 <Text style={styles.content}>{content}</Text>
             </Pressable>
         </View>
@@ -24,19 +25,16 @@ const styles = StyleSheet.create({
     box: {
         flex: 1,
         flexDirection: 'column',
-        shadowRadius: 0,
-        shadowColor: '#000',
-        shadowOffset: { width: 10, height: 10 },
     },
     title: {
-        fontSize: 18,
+        fontSize: 30,
         textAlign: 'left',
         marginLeft: 10,
         marginTop: 10,
         flex: 1,
     },
     content: {
-        fontSize: 30,
+        fontSize: 48,
         textAlign: "right",
         marginRight: 10,
         flex: 2,
