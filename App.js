@@ -10,14 +10,10 @@ import AssetManage from "./src/page/AssetManage";
 import Preference from "./src/page/Preference";
 import {Ionicons} from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
-import ReceiptModal from "./src/page/ReceiptModal";
 
-const BackgroundImage = require('./src/assets/background-image.png');
 const Tab = createMaterialTopTabNavigator();
 const windowWidth = Dimensions.get('window').width;
 const tabWidth = windowWidth/4;
-
-
 
 export default function App() {
   return (
@@ -47,6 +43,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+function createDb() {}
 
 const styles = StyleSheet.create({
     container: {
