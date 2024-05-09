@@ -1,4 +1,4 @@
-import {Alert, Modal, Platform, Text, View} from 'react-native';
+import {Alert, Modal, Platform, Pressable, Text, View} from 'react-native';
 import 'react';
 import Button from "../component/Button";
 import MessageBox from "../component/MessageBox";
@@ -98,6 +98,28 @@ export default function Daily({ navigation }) {
                         <View>
                             <CurrencyInput className={'bg-white text-3xl rounded-lg w-[320px] text-right'}
                                            value={price} onChangeValue={setPrice} delimiter={','} separator={'.'} precision={0} prefix={'₩'} minValue={0}/>
+                        </View>
+                        <View className={'flex-row justify-center items-center m-2 rounded-lg bg-amber-50'}>
+                            <Pressable className='flex-1 items-center justify-center'onPress={() => {
+                                setPrice(price + 50000);
+                            }}>
+                                <Text className={'text-xl'}>₩50,000</Text>
+                            </Pressable>
+                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center'onPress={() => {
+                                setPrice(price + 10000);
+                            }}>
+                                <Text className={'text-xl'}>₩10,000</Text>
+                            </Pressable>
+                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center' onPress={() => {
+                                setPrice(price + 5000);
+                            }}>
+                                <Text className={'text-xl'}>₩5,000</Text>
+                            </Pressable>
+                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center'onPress={() => {
+                                setPrice(price + 1000);
+                            }}>
+                                <Text className={'text-xl'}>₩1,000</Text>
+                            </Pressable>
                         </View>
                         <Button icon={'check'} label={""} func={() => {
                             addReceipt(price); //include refresh();

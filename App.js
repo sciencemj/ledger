@@ -1,14 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import {StyleSheet, Text, View, Image, Dimensions, Modal} from 'react-native';
-import ImageViewer from "./src/component/ImageViewer";
-import Button from "./src/component/Button";
 import Daily from "./src/page/Daily";
 import {NavigationContainer} from "@react-navigation/native";
 import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
 import Monthly from "./src/page/Monthly";
 import AssetManage from "./src/page/AssetManage";
 import Preference from "./src/page/Preference";
-import {Ionicons} from "@expo/vector-icons";
 import { AntDesign } from '@expo/vector-icons';
 
 const Tab = createMaterialTopTabNavigator();
