@@ -7,6 +7,7 @@ import Monthly from "./src/page/Monthly";
 import AssetManage from "./src/page/AssetManage";
 import Preference from "./src/page/Preference";
 import { AntDesign } from '@expo/vector-icons';
+import { registerRootComponent } from 'expo';
 
 const Tab = createMaterialTopTabNavigator();
 const windowWidth = Dimensions.get('window').width;
@@ -41,7 +42,7 @@ export default function App() {
   );
 }
 
-function createDb() {}
+registerRootComponent(App);
 
 const styles = StyleSheet.create({
     container: {

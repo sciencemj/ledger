@@ -8,23 +8,7 @@ import {BlurView} from "expo-blur";
 import * as Haptics from 'expo-haptics';
 import {ImpactFeedbackStyle} from 'expo-haptics';
 import CurrencyInput from "react-native-currency-input";
-import * as SQLite from "expo-sqlite";
-
-function openDatabase() {
-    if (Platform.OS === "web") {
-        return {
-            transaction: () => {
-                return {
-                    executeSql: () => {},
-                };
-            },
-        };
-    }
-
-    return SQLite.openDatabase("database.db");
-}
-
-const db = openDatabase();
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Daily({ navigation }) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -34,46 +18,39 @@ export default function Daily({ navigation }) {
     const dailyBudget = 10000;
     const monthlyBudget = 500000;
 
-    function totalToday() {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT COALESCE(SUM(price), 0) AS total FROM receipts WHERE time = CURRENT_DATE;', [], (_, { rows }) => {
-                const sum = rows._array[0].total || 0;
-                setTodaySum(sum);
-            });
-        });
+    async function totalToday() {
+        const today = new Date().toISOString().split('T')[0];
+        const receipts = JSON.parse(await AsyncStorage.getItem('receipts')) || [];
+        const todayReceipts = receipts.filter(receipt => receipt.date === today);
+        const sum = todayReceipts.reduce((acc, curr) => acc + curr.price, 0);
+        setTodaySum(sum);
     }
 
-    function totalMonth() {
-        db.transaction((tx) => {
-            tx.executeSql('SELECT COALESCE(SUM(price), 0) AS total FROM receipts WHERE time >= DATE(\'now\', \'start of month\');', [], (_, { rows }) => {
-                const sum = rows._array[0].total || 0;
-                setMonthSum(sum);
-            });
-        });
+    async function totalMonth() {
+        const thisMonth = new Date().toISOString().slice(0, 7);
+        const receipts = JSON.parse(await AsyncStorage.getItem('receipts')) || [];
+        const monthReceipts = receipts.filter(receipt => receipt.date.startsWith(thisMonth));
+        const sum = monthReceipts.reduce((acc, curr) => acc + curr.price, 0);
+        setMonthSum(sum);
     }
 
-    function addReceipt(price) {
-        db.transaction((tx) => {
-            tx.executeSql('insert into receipts (price) values (?)', [price]);
-            refresh();
-            tx.executeSql('SELECT * FROM receipts;', [], (_, { rows }) => {
-                console.log(JSON.stringify(rows))
-            });
-        });
+    async function addReceipt(price) {
+        const newReceipt = {
+            _id: Date.now(),
+            price: price,
+            date: new Date().toISOString().split('T')[0],
+            category: '미정'
+        };
+        const receipts = JSON.parse(await AsyncStorage.getItem('receipts')) || [];
+        receipts.push(newReceipt);
+        await AsyncStorage.setItem('receipts', JSON.stringify(receipts));
+        await totalToday();
+        await totalMonth();
     }
-
-    function refresh() {
-        totalToday();
-        totalMonth();
-    }
-
 
     useEffect(() => {
-        db.transaction((tx) => {
-            //tx.executeSql('drop table if exists receipts;'); //reset when start, debug option
-            tx.executeSql('create table if not exists receipts (id INTEGER PRIMARY KEY AUTOINCREMENT, time DAY default CURRENT_DATE, price INT);')
-        });
-        refresh();
+        totalToday();
+        totalMonth();
     }, []);
 
     return (
@@ -121,8 +98,8 @@ export default function Daily({ navigation }) {
                                 <Text className={'text-xl'}>₩1,000</Text>
                             </Pressable>
                         </View>
-                        <Button icon={'check'} label={""} func={() => {
-                            addReceipt(price); //include refresh();
+                        <Button icon={'check'} label={""} func={async () => {
+                            await addReceipt(price);
                             setPrice(0);
                             Haptics.impactAsync(ImpactFeedbackStyle.Heavy).then(r => null);
                             setModalOpen(!modalOpen);
