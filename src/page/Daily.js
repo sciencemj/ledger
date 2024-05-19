@@ -9,9 +9,12 @@ import * as Haptics from 'expo-haptics';
 import {ImpactFeedbackStyle} from 'expo-haptics';
 import CurrencyInput from "react-native-currency-input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AddReceiptModal from "../component/modals/AddReceiptModal";
+import EditDailyReciptModal from "../component/modals/EditDailyReceiptModal";
 
 export default function Daily({ navigation }) {
-    const [modalOpen, setModalOpen] = useState(false);
+    const [addModalOpen, setAddModalOpen] = useState(false);
+    const [editModalOpen, setEditModalOpen] = useState(false);
     const [price, setPrice] = useState(0);
     const [todaySum, setTodaySum] = useState(0);
     const [monthSum, setMonthSum] = useState(0);
@@ -58,7 +61,7 @@ export default function Daily({ navigation }) {
             <View className={'grid grid-cols-4'}>
                 <MessageBox icon={<MaterialCommunityIcons name="cash-minus" size={36} color="black" />}
                             title={"Spend"} content={todaySum.toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })}
-                            func={() => Alert.alert("Budget")} />
+                            func={() => setEditModalOpen(!editModalOpen)} />
                 <MessageBox icon={<MaterialCommunityIcons name="cash" size={36} color="black" />}
                             title={"Budget"} content={(dailyBudget - todaySum).toLocaleString('ko-KR', { style: 'currency', currency: 'KRW' })} func={() => Alert.alert("Budget")} />
                 <MessageBox icon={<MaterialCommunityIcons name="cash-multiple" size={36} color="black" />}
@@ -66,47 +69,10 @@ export default function Daily({ navigation }) {
             </View>
             <Button icon="plus" label="" func={() => {
                 Haptics.impactAsync(ImpactFeedbackStyle.Heavy).then(r => null);
-                setModalOpen(!modalOpen);
+                setAddModalOpen(!addModalOpen);
             }} />
-            <Modal transparent={true} visible={modalOpen} animationType="slide">
-                <BlurView className={'flex-1 items-center justify-center'}>
-                    <View className={'items-center justify-center bg-indigo-300 w-11/12 h-auto rounded-lg'}>
-                        <Text className={'text-2xl'}>hihihi</Text>
-                        <View>
-                            <CurrencyInput className={'bg-white text-3xl rounded-lg w-[320px] text-right'}
-                                           value={price} onChangeValue={setPrice} delimiter={','} separator={'.'} precision={0} prefix={'₩'} minValue={0}/>
-                        </View>
-                        <View className={'flex-row justify-center items-center m-2 rounded-lg bg-amber-50'}>
-                            <Pressable className='flex-1 items-center justify-center' onPress={() => {
-                                setPrice(price + 50000);
-                            }}>
-                                <Text className={'text-xl'}>₩50,000</Text>
-                            </Pressable>
-                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center' onPress={() => {
-                                setPrice(price + 10000);
-                            }}>
-                                <Text className={'text-xl'}>₩10,000</Text>
-                            </Pressable>
-                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center' onPress={() => {
-                                setPrice(price + 5000);
-                            }}>
-                                <Text className={'text-xl'}>₩5,000</Text>
-                            </Pressable>
-                            <Pressable className='flex-1 border-l-[1px] border-l-black items-center justify-center' onPress={() => {
-                                setPrice(price + 1000);
-                            }}>
-                                <Text className={'text-xl'}>₩1,000</Text>
-                            </Pressable>
-                        </View>
-                        <Button icon={'check'} label={""} func={async () => {
-                            await addReceipt(price);
-                            setPrice(0);
-                            Haptics.impactAsync(ImpactFeedbackStyle.Heavy).then(r => null);
-                            setModalOpen(!modalOpen);
-                        }} />
-                    </View>
-                </BlurView>
-            </Modal>
+            <AddReceiptModal modalOpen={addModalOpen} setModalOpen={setAddModalOpen} price={price} setPrice={setPrice} addReceipt={addReceipt} />
+            <EditDailyReciptModal modalOpen={editModalOpen} setModalOpen={setEditModalOpen} price={price} setPrice={setPrice} addReceipt={addReceipt} />
         </View>
     );
 }
