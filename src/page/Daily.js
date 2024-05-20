@@ -1,5 +1,5 @@
 import {Alert, Modal, Platform, Pressable, Text, View} from 'react-native';
-import 'react';
+import React from 'react';
 import Button from "../component/Button";
 import MessageBox from "../component/MessageBox";
 import {useEffect, useState} from "react";
@@ -11,6 +11,9 @@ import CurrencyInput from "react-native-currency-input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AddReceiptModal from "../component/modals/AddReceiptModal";
 import EditDailyReciptModal from "../component/modals/EditDailyReceiptModal";
+import { useFocusEffect } from '@react-navigation/native';
+
+const categories = ['식비', '쇼핑', '카페', '여가', '요금', '기타'];
 
 export default function Daily({ navigation }) {
     const [addModalOpen, setAddModalOpen] = useState(false);
@@ -18,8 +21,8 @@ export default function Daily({ navigation }) {
     const [price, setPrice] = useState(0);
     const [todaySum, setTodaySum] = useState(0);
     const [monthSum, setMonthSum] = useState(0);
-    const dailyBudget = 10000;
-    const monthlyBudget = 500000;
+    const [monthlyBudget, setMonthlyBudget] = useState(500000);
+    const [dailyBudget, setDailyBudget] = useState(10000);
 
     async function totalToday() {
         const today = new Date().toISOString().split('T')[0];
@@ -37,12 +40,12 @@ export default function Daily({ navigation }) {
         setMonthSum(sum);
     }
 
-    async function addReceipt(price) {
+    async function addReceipt(price, category) {
         const newReceipt = {
             _id: Date.now(),
             price: price,
             date: new Date().toISOString().split('T')[0],
-            category: '미정'
+            category: category
         };
         const receipts = JSON.parse(await AsyncStorage.getItem('receipts')) || [];
         receipts.push(newReceipt);
@@ -52,9 +55,31 @@ export default function Daily({ navigation }) {
     }
 
     useEffect(() => {
+        async function getMonthlyBudget() {
+            const budget = await AsyncStorage.getItem('monthlyBudget');
+            setMonthlyBudget(Number(JSON.parse(budget)));
+            console.log(monthlyBudget);
+            setDailyBudget(monthlyBudget / 30);
+        }
+        getMonthlyBudget();
         totalToday();
         totalMonth();
-    }, []);
+    }, [editModalOpen || addModalOpen]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            async function getMonthlyBudget() {
+                const budget = await AsyncStorage.getItem('monthlyBudget');
+                if (budget) {
+                    setMonthlyBudget(Number(JSON.parse(budget)));
+                    setDailyBudget(Number(JSON.parse(budget)) / 30);
+                }
+            }
+            getMonthlyBudget();
+            totalToday();
+            totalMonth();
+        }, [])
+    );
 
     return (
         <View className={'flex-1 bg-gray-500 items-center justify-center'}>

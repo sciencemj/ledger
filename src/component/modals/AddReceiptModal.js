@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, View, Text, Pressable } from 'react-native';
 import { BlurView } from "expo-blur";
 import CurrencyInput from "react-native-currency-input";
 import Button from "../Button";
 import EditDailyReciptModal from './EditDailyReceiptModal';
 
+const categories = ['식비', '쇼핑', '카페', '여가', '요금', '기타'];
+
 const AddReceiptModal = ({ modalOpen, setModalOpen, price, setPrice, addReceipt }) => {
+    const [category, setCategory] = useState('기타');
     return (
         <Modal transparent={true} visible={modalOpen} animationType="slide">
             <BlurView className={'flex-1 items-center justify-center'}>
@@ -37,8 +40,17 @@ const AddReceiptModal = ({ modalOpen, setModalOpen, price, setPrice, addReceipt 
                             <Text className={'text-xl'}>₩1,000</Text>
                         </Pressable>
                     </View>
+                    <View className={'flex-row justify-center items-center m-2 rounded-lg bg-amber-50'}>
+                        {categories.map((cat) => (
+                            <Pressable className={`flex-1 border-l-[1px] border-r-[1px] border-black items-center justify-center ${category === cat ? 'bg-gray-400' : 'bg-transparent'}`} onPress={() => {
+                                setCategory(cat);
+                            }}>
+                                <Text className={'text-xl'}>{cat}</Text>
+                            </Pressable>
+                        ))}
+                    </View>
                     <Button icon={'check'} label={""} func={async () => {
-                        await addReceipt(price);
+                        await addReceipt(price, category);
                         setPrice(0);
                         setModalOpen(!modalOpen);
                     }} />
