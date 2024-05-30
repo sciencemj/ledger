@@ -59,7 +59,7 @@ export default function Daily({ navigation }) {
             const budget = await AsyncStorage.getItem('monthlyBudget');
             setMonthlyBudget(Number(JSON.parse(budget)));
             console.log(monthlyBudget);
-            setDailyBudget(monthlyBudget / 30);
+            setDailyBudget(monthlyBudget / new Date(Date.now()).getDate());
         }
         getMonthlyBudget();
         totalToday();
